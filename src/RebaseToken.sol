@@ -81,13 +81,6 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
     }
 
     /**
-     * @notice get the principle balance of the user (the amount of tokens that have actually been minted to the user), not including any accrued interest
-     * @notice since the last time the user interacted with the protocol
-     * @param _user the address of the user to get the principle balance of
-     * @return the principle balance of the user
-     */
-
-    /**
      * @notice mint the user tokens when they deposit into the vault
      * @param _to the address to mint the tokens to
      * @param _amount the amount of tokens to mint
@@ -221,6 +214,12 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
         return s_interestRate;
     }
 
+    /**
+     * @notice get the principle balance of the user (the amount of tokens that have actually been minted to the user), not including any accrued interest
+     * @notice since the last time the user interacted with the protocol
+     * @param _user the address of the user to get the principle balance of
+     * @return the principle balance of the user
+     */
     function getPrincipleBalanceOf(address _user) external view returns (uint256) {
         return super.balanceOf(_user);
     }

@@ -21,6 +21,7 @@ contract Vault {
         i_rebaseToken = _rebaseToken;
     }
 
+    //Fallbacl funtion to receive eth
     receive() external payable {}
 
     /**
