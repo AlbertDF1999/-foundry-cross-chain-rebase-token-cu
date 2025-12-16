@@ -191,7 +191,12 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
         // (2) calculate their current balance including any interest -> total balanceOf
         uint256 currentBalance = balanceOf(_user);
         // calculate the number of tokens that need to minted to the user -> (2) - (1)
-        uint256 balanceIncrease = currentBalance - previousprincipleBalance;
+        uint256 balanceIncrease = 0;
+        if (currentBalance > previousprincipleBalance) {
+            // Only calculate increase if the balance has grown
+            balanceIncrease = currentBalance - previousprincipleBalance;
+        }
+        // uint256 balanceIncrease = currentBalance - previousprincipleBalance;
         // call _mint to mint the interest tokens to the user
         _mint(_user, balanceIncrease);
         // set the users last updated timestamp
