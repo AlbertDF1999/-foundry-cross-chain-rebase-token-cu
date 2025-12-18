@@ -18,14 +18,29 @@ import {TokenAdminRegistry} from "lib/ccip/contracts/src/v0.8/ccip/tokenAdminReg
 
 contract TokenDeployer is Script {
     function run() public returns (RebaseToken token, RebaseTokenPool pool) {
-        vm.startBroadcast();
         CCIPLocalSimulatorFork ccipLocalSimulatorFork = new CCIPLocalSimulatorFork();
-        token = new RebaseToken();
         Register.NetworkDetails memory networkDetails = ccipLocalSimulatorFork.getNetworkDetails(block.chainid);
+        vm.startBroadcast();
+        token = new RebaseToken();
         pool = new RebaseTokenPool(
             IERC20(address(token)), new address[](0), networkDetails.rmnProxyAddress, networkDetails.routerAddress
         );
         token.grantMintAndBurnRole(address(pool));
+        vm.stopBroadcast();
+    }
+}
+
+contract SetPermissions is Script {
+    function grantRole(address token, address pool) public {
+        vm.startBroadcast();
+        IRebaseToken(token).grantMintAndBurnRole(pool);
+        vm.stopBroadcast();
+    }
+
+    function setAdmin(address token, address pool) public {
+        CCIPLocalSimulatorFork ccipLocalSimulatorFork = new CCIPLocalSimulatorFork();
+        Register.NetworkDetails memory networkDetails = ccipLocalSimulatorFork.getNetworkDetails(block.chainid);
+        vm.startBroadcast();
         RegistryModuleOwnerCustom(networkDetails.registryModuleOwnerCustomAddress).registerAdminViaOwner(address(token));
         TokenAdminRegistry(networkDetails.tokenAdminRegistryAddress).acceptAdminRole(address(token));
         TokenAdminRegistry(networkDetails.tokenAdminRegistryAddress).setPool(address(token), address(pool));
